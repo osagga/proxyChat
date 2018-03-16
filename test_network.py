@@ -1,26 +1,26 @@
+from umbral import pre, keys, config
 from nucypher import MockNetwork
-from umbral import umbral, keys, config
 
-# Setup pyUmbral
+# Setup pypre
 config.set_default_curve()
 
 
 # Generate Keys and setup mock network
-alice_privkey = keys.UmbralPrivateKey.gen_key()
+alice_privkey = keys.prePrivateKey.gen_key()
 alice_pubkey = alice_privkey.get_pubkey()
 
-bob_privkey = keys.UmbralPrivateKey.gen_key()
+bob_privkey = keys.prePrivateKey.gen_key()
 bob_pubkey = bob_privkey.get_pubkey()
 
 mock_kms = MockNetwork()
 
 # Encrypt some data
 plaintext = b'attack at dawn!'
-ciphertext, capsule = umbral.encrypt(alice_pubkey, plaintext)
+ciphertext, capsule = pre.encrypt(alice_pubkey, plaintext)
 
 
 # Perform split-rekey and grant re-encryption policy
-alice_kfrags, _ = umbral.split_rekey(alice_privkey, bob_pubkey, 10, 20)
+alice_kfrags, _ = pre.split_rekey(alice_privkey, bob_pubkey, 10, 20)
 assert len(alice_kfrags) == 20
 
 policy_id = mock_kms.grant(alice_kfrags)
@@ -37,7 +37,7 @@ bob_capsule = capsule
 for cfrag in bob_cfrags:
     bob_capsule.attach_cfrag(cfrag)
 
-decrypted_data = umbral.decrypt(bob_capsule, bob_privkey, ciphertext, alice_pubkey)
+decrypted_data = pre.decrypt(bob_capsule, bob_privkey, ciphertext, alice_pubkey)
 assert decrypted_data == plaintext
 
 
