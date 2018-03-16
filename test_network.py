@@ -4,6 +4,7 @@ from nucypher import MockNetwork
 # Setup pypre
 config.set_default_curve()
 
+mock_kms = MockNetwork()
 
 # Generate Keys and setup mock network
 alice_privkey = keys.prePrivateKey.gen_key()
@@ -12,12 +13,9 @@ alice_pubkey = alice_privkey.get_pubkey()
 bob_privkey = keys.prePrivateKey.gen_key()
 bob_pubkey = bob_privkey.get_pubkey()
 
-mock_kms = MockNetwork()
-
 # Encrypt some data
 plaintext = b'attack at dawn!'
 ciphertext, capsule = pre.encrypt(alice_pubkey, plaintext)
-
 
 # Perform split-rekey and grant re-encryption policy
 alice_kfrags, _ = pre.split_rekey(alice_privkey, bob_pubkey, 10, 20)
