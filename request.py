@@ -48,7 +48,7 @@ def test_register_request():
 	print(new_req.serialize())
 
 	assert(new_req.serialize() == my_req.serialize())
-
+	#Create the public key objects from the bytes in the request arguments
 	pub_key_1 = keys.UmbralPublicKey.from_bytes(new_req.args['pub_key'])
 	pub_key_2 = keys.UmbralPublicKey.from_bytes(my_req.args['pub_key'])
 
@@ -66,36 +66,5 @@ Key Serialization and payload creation
 	(-) 
 
 '''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
