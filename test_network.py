@@ -6,10 +6,10 @@ config.set_default_curve()
 
 
 # Generate Keys and setup mock network
-alice_privkey = keys.prePrivateKey.gen_key()
+alice_privkey = keys.UmbralPrivateKey.gen_key()
 alice_pubkey = alice_privkey.get_pubkey()
 
-bob_privkey = keys.prePrivateKey.gen_key()
+bob_privkey = keys.UmbralPrivateKey.gen_key()
 bob_pubkey = bob_privkey.get_pubkey()
 
 mock_kms = MockNetwork()
@@ -20,7 +20,7 @@ ciphertext, capsule = pre.encrypt(alice_pubkey, plaintext)
 
 
 # Perform split-rekey and grant re-encryption policy
-alice_kfrags, _ = pre.split_rekey(alice_privkey, bob_pubkey, 10, 20)
+alice_kfrags = pre.split_rekey(alice_privkey, bob_pubkey, 10, 20)
 assert len(alice_kfrags) == 20
 
 policy_id = mock_kms.grant(alice_kfrags)
