@@ -3,7 +3,13 @@ User
 	public_key = ''
 	secret_ley = ''
 
-	commands = ['usr_send_msg', 'usr_send_frag' ,'usr_exit']
+NEW_MESSAGE = 'new_msg' #send a new message from node to the user
+SEND_MESSAGE = 'send_msg' #send a message from user to node
+EXIT = 'exit' # Send exit message from user to node
+REGISTER = 'register' #send a register request from user to node
+SEND_FRAG = 'send_frag' #send a frag value from user to node 
+
+
 
 
 def keygen():
