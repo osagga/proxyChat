@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 from umbral import pre, keys, config
 from nucypher import MockNetwork
 
@@ -25,10 +27,11 @@ policy_id = mock_kms.grant(alice_kfrags)
 assert type(policy_id) == str
 
 
+print(alice_kfrags[0])
+
 # Perform re-encryption request
 bob_cfrags = mock_kms.reencrypt(policy_id, capsule, 10)
 assert len(bob_cfrags) == 10
-
 
 # Simulate capsule handoff,
 bob_capsule = capsule
