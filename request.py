@@ -56,7 +56,7 @@ def test_register_request():
 
 	print('SUCCESS')
 	
-test_register_request()
+# test_register_request()
 
 '''
 Key Serialization and payload creation	
