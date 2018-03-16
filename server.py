@@ -2,8 +2,10 @@
 import socket
 import select
 import sys
-from thread import *
+from threading import Thread
  
+ENCODING = "utf-8"
+
 """The first argument AF_INET is the address domain of the
 socket. This is used when we have an Internet Domain with
 any two hosts The second argument is the type of socket.
@@ -14,7 +16,7 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
  
 # checks whether sufficient arguments have been provided
 if len(sys.argv) != 3:
-    print "Correct usage: script, IP address, port number"
+    print("Correct usage: script, IP address, port number")
     exit()
  
 # takes the first argument from command prompt as IP address
@@ -41,17 +43,19 @@ list_of_clients = []
 def clientthread(conn, addr):
  
     # sends a message to the client whose user object is conn
-    conn.send("Welcome to this chatroom!")
+    conn.send("Welcome to this chatroom!".encode(ENCODING))
  
     while True:
             try:
-                message = conn.recv(2048)
+                message = conn.recv(2048).decode(ENCODING)
                 if message:
- 
+                    # Parse command
+
+                        # IF Add
                     """prints the message and address of the
                     user who just sent the message on the server
                     terminal"""
-                    print "<" + addr[0] + "> " + message
+                    print("<" + addr[0] + "> " + message)
  
                     # Calls broadcast function to send message to all
                     message_to_send = "<" + addr[0] + "> " + message
@@ -72,7 +76,7 @@ def broadcast(message, connection):
     for clients in list_of_clients:
         if clients!=connection:
             try:
-                clients.send(message)
+                clients.send(message.encode(ENCODING))
             except:
                 clients.close()
  
@@ -99,11 +103,11 @@ while True:
     list_of_clients.append(conn)
  
     # prints the address of the user that just connected
-    print addr[0] + " connected"
+    print(addr[0] + " connected")
  
     # creates and individual thread for every user 
     # that connects
-    start_new_thread(clientthread,(conn,addr))    
+    Thread(target=clientthread,args=(conn,addr)).start()
  
 conn.close()
 server.close()
