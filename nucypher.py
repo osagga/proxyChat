@@ -2,7 +2,7 @@ import uuid
 import random
 from typing import List
 
-from umbral import umbral, fragments
+from umbral import pre, fragments
 
 
 class MockNetwork(object):
@@ -40,7 +40,7 @@ class MockNetwork(object):
         self.db[policy_id] = kfrags
         return policy_id
 
-    def reencrypt(self, policy_id: str, capsule: umbral.Capsule, M: int) -> List[fragments.CapsuleFrag]:
+    def reencrypt(self, policy_id: str, capsule: pre.Capsule, M: int) -> List[fragments.CapsuleFrag]:
         """
         Re-encrypts the given capsule 'M' number of times and returns a list
         of CapsuleFrags (CFrags) to be attached to the original Capsule.
@@ -63,7 +63,7 @@ class MockNetwork(object):
         cfrags = []
         m_kfrags = random.sample(kfrags, M)
         for kfrag in m_kfrags:
-            cfrags.append(umbral.reencrypt(kfrag, capsule))
+            cfrags.append(pre.reencrypt(kfrag, capsule))
         return cfrags
 
     def revoke(self, policy_id: str):
