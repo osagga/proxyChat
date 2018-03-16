@@ -1,0 +1,26 @@
+User 
+------
+	public_key = ''
+	secret_ley = ''
+
+	commands = ['usr_send_msg', 'usr_send_frag' ,'usr_exit']
+
+
+def keygen():
+
+def serialize_fragment_arr(frag):
+
+def deserialize_fragment(serialized_frag): 
+
+def create_frags(public_keys):
+
+def notify_node(command, args):
+
+
+
+
+
+
+
+
+

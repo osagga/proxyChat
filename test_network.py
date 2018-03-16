@@ -15,7 +15,6 @@ alice_pubkey = alice_privkey.get_pubkey()
 bob_privkey = keys.UmbralPrivateKey.gen_key()
 bob_pubkey = bob_privkey.get_pubkey()
 
-
 # Encrypt some data
 plaintext = b'attack at dawn!'
 ciphertext, capsule = pre.encrypt(alice_pubkey, plaintext)
