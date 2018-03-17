@@ -27,7 +27,6 @@ def print_map():
 
 def clientthread(conn, addr):
     # sends a message to the client whose user object is conn
-    # conn.send("Welcome to this chatroom!".encode(ENCODING))
     global key_fragment_arr
     usr_ip = addr[0]
     while True:
@@ -35,7 +34,6 @@ def clientthread(conn, addr):
             message = conn.recv(BUFFER_SIZE).decode(ENCODING)
             if message:
                 # Parse command
-                # print("The message I'm parsing is {}".format(message))
                 try:
                     request = Request.deserialize(message)
                 except:
@@ -66,18 +64,7 @@ def clientthread(conn, addr):
                     dst_id = pk_to_id[dst_pubkey]
                     khfrag_sample = args['khfrag_sample']
                     khfrag_sample = [fragments.KFrag.from_bytes(sample) for sample in khfrag_sample]
-                    # print("Got the following kfrag samples {0}".format(khfrag_sample))
                     key_fragment_arr.set_fragment(src_id, dst_id, khfrag_sample)
-                    # print_map()
-                
-                # elif cmd == cmd_types.SEND_PLAINTEXT:
-                #     args = request.args
-                #     msg_received = args['msg']
-                #     # Calls broadcast function to send message to all
-                #     message_to_send = "<" + usr_ip + "> " + msg_received
-                #     print(message_to_send)
-                #     new_req = Request.send_plaintext_request(message_to_send)
-                #     broadcast(new_req.serialize(), conn)
                 elif cmd == cmd_types.USER_EXT:
                     remove(usr_ip, conn)
                     continue
@@ -86,7 +73,6 @@ def clientthread(conn, addr):
             else:
                 """message may have no content if the connection
                 is broken, in this case we remove the connection"""
-                # print("The message is {}".format(message))
                 remove(usr_ip, conn)
                 exit()
  
@@ -95,10 +81,9 @@ def share_cfrags(usr_pk, sender_capsule, sender_ciphertext, connection):
     global key_fragment_arr
     for clients in list_of_clients:
         if clients!=connection:
-            # try:
+
             # get sender PK from ip
             src_pk = usr_pk
-            # print("my type is {}".format(type(src_pk)))
             src_id = pk_to_id[src_pk]
             dst_ip = clients.getpeername()[0]
             dst_id = ip_to_id[dst_ip][0]
@@ -109,11 +94,6 @@ def share_cfrags(usr_pk, sender_capsule, sender_ciphertext, connection):
             # Send the sender_capsule, cfrag, senderPk, sender_ciphertext
             req = Request.send_cfrag_request(sender_capsule.to_bytes(), cfrags, src_pk, sender_ciphertext)
             clients.send(req.serialize().encode(ENCODING))
-            # except:
-            #     print("cfrag sharing FAILED!")
-            #     clients.close()
-            #     # if the link is broken, we remove the client
-            #     remove(clients, connection)
     
 def broadcast(message, connection):
     """Using the below function, we broadcast the message to all
@@ -137,36 +117,19 @@ def remove(ip, connection):
     '''
         User of <ip> is remove from the chat 
     '''
-    # try:
-    #     connection = ip_to_id[ip][2]
-    # except:
-    #     print("Can't find the client socket.")
-    
     if connection in list_of_clients:
         list_of_clients.remove(connection)
     return
-	# rem_id = ip_to_id[ip]
-	
-	# for _from in key_fragment_arr: 
-	# 	set_fragment(_from, rem_id, None)
-
-	# for usr in all_users:
-	# 	set_fragment(rem_id, usr, None)
-	
-	# available_ids += [rem_id]
 
 def send_pks_to_client(ip, conn):
     print('[REG STAGE 2] Start')
     pk_arr = []
 
     for client_ip in ip_to_id:
-        # print('2')
         client_info = ip_to_id[client_ip]
         if(client_ip == ip):
-            # print('3')
             continue;
         elif(len(client_info) == 3 ):
-            # print('4')
             client_id = client_info[0]
             client_pubkey = client_info[1]
             print("the type is {}".format(type(client_pubkey)))
