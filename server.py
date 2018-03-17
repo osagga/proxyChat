@@ -57,6 +57,7 @@ def clientthread(conn, addr):
                     alice_capsule = pre.Capsule.from_bytes(args['sender_capsule'])
                     alice_ciphertext = args['ciphertext']
                     alice_pk = args['sender_publickey']
+                    print("<{0}> {1}".format(alice_pk[:10], alice_ciphertext))
                     share_cfrags(alice_pk, alice_capsule, alice_ciphertext, conn)
                 elif cmd == cmd_types.SEND_FRG_SAMPLE:
                     src_pubkey = args['client_pubkey']
@@ -78,7 +79,6 @@ def clientthread(conn, addr):
                 #     new_req = Request.send_plaintext_request(message_to_send)
                 #     broadcast(new_req.serialize(), conn)
                 elif cmd == cmd_types.USER_EXT:
-                    #TODO
                     remove(usr_ip, conn)
                     continue
                 else:
@@ -201,14 +201,13 @@ def register(ip, conn, new_client_pubkey):
     return
 
 def notify_clients_of_new_user(new_client_pubkey, conn):
-    message_to_send = "New user joined!!!!"
-    new_req = Request.send_plaintext_request(message_to_send)
+    message_to_send = "New user {0} joined!".format(new_client_pubkey[:10])
+    welcome_req = Request.send_plaintext_request(message_to_send)
     req = Request.send_new_user_notify_request(new_client_pubkey)
-    broadcast(new_req.serialize(), conn)
-    ser_req = req.serialize()
     print(message_to_send)
     print("[BEGIN] Broadcast New User Request to Clients ")
-    broadcast(ser_req, conn)
+    broadcast(req.serialize(), conn)
+    broadcast(welcome_req.serialize(), conn)
 
 def init_ids():
     global available_ids
