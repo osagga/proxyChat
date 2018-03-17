@@ -21,7 +21,7 @@ ctr_id = 0
 
 def clientthread(conn, addr):
     # sends a message to the client whose user object is conn
-    conn.send("Welcome to this chatroom!".encode(ENCODING))
+    # conn.send("Welcome to this chatroom!".encode(ENCODING))
     usr_ip = addr[0]
     while True:
             try:
