@@ -142,7 +142,11 @@ def main():
                     # Decrypting the ciphertext
                     plaintext = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
 
-                    print("<{0}> {1}".format(alice_pub_key.to_bytes()[:10], plaintext.decode(ENCODING))) 
+                    print("<{0}> {1}".format(alice_pub_key.to_bytes()[:10], plaintext.decode(ENCODING)))
+                
+                elif cmd == cmd_types.SEND_PLAINTEXT:
+                        msg_received = args['msg']
+                        print(msg_received)
                 else:
                     print(cmd)
                     print("Invalid command received")
