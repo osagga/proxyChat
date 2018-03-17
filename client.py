@@ -81,7 +81,7 @@ def main():
                         khfrags_sample += [khfrags[i]]
                     #Create the request
                     req = Request.send_new_user_khfrag_samples_request(client_pubkey = user_pub_key, new_user_pubkey = new_pubkey, khfrag_sample = khfrags_sample)
-                    req_ser = khfrag_sample_req.serialize()
+                    req_ser = req.serialize()
                     print('[CLIENT] Created KhFrag Sample Request = ' + req_ser)
                     server.send(req_ser.encode(ENCODING))
                     continue
