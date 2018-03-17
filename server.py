@@ -67,6 +67,7 @@ def clientthread(conn, addr):
  
             except:
                 print("MAIN ERROR")
+                exit()
                 continue
  
 def broadcast(message, connection):
@@ -120,15 +121,43 @@ def remove(ip, connection):
 	# 	set_fragment(rem_id, usr, None)
 	
 	# available_ids += [rem_id]
-    
+
+def send_pks_to_client(ip, conn):
+    print('[REG STAGE 2] Start')
+    pk_arr = []
+
+    for client_ip in ip_to_id:
+        print('2')
+        client_info = ip_to_id[client_ip]
+        if(client_ip == ip):
+            print('3')
+            continue;
+        elif(len(client_info) == 3 ):
+            print('4')
+            client_id = client_info[0]
+            client_pubkey = client_info[1]
+            pk_arr += [client_pubkey]
+        else:
+            print('[ERROR] in Registration step 2')
+            exit()
+    print('[REG STAGE TWO] End, Collected '+ str(len(pk_arr)) + ' NUM PKS')
+    if(len(pk_arr)>0):
+        req = Request.send_all_pks_request(pk_arr)
+        ser_req = req.serialize()
+        print('[REG STAGE TWO] Client Pks Found '+ ser_req)
 
 def register(ip, conn, pubkey):
+    '''
+        Registration phase 1 
+    '''
+    print("[BEGIN] Node Registration Routine")
     global ip_to_id
     usr_id = get_id()
     if ip in ip_to_id:
         print("Client already registered.")
     ip_to_id[ip] = (usr_id, pubkey, conn)
-    send_client_pks()
+    print("[REG STAGE ONE] Registered [id: "+ str(id)+ ", Pk: "+str(pubkey.to_bytes())+ ']')
+    send_pks_to_client(ip,conn)
     return
 
 def init_ids():
