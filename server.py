@@ -11,9 +11,10 @@ from umbral import keys, config
 
 ENCODING = "utf-8"
 NUM_CLIENTS = 100
-BUFFER_SIZE = 2048
+BUFFER_SIZE = 2048*3
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
+pk_to_id = {} #Indexed by pk, returns id
 key_fragment_arr = None #Indexed by [from][to] contains corresponding fragment
 available_ids = None
 list_of_clients = []
@@ -22,12 +23,14 @@ ctr_id = 0
 def clientthread(conn, addr):
     # sends a message to the client whose user object is conn
     # conn.send("Welcome to this chatroom!".encode(ENCODING))
+    global key_fragment_arr
     usr_ip = addr[0]
     while True:
             # Make sure that encoding will not violate the check on `message` below
             message = conn.recv(BUFFER_SIZE).decode(ENCODING)
             if message:
                 # Parse command
+                print("The message I'm parsing is {}".format(message))
                 try:
                     request = Request.deserialize(message)
                 except:
@@ -49,9 +52,16 @@ def clientthread(conn, addr):
                     alice_capsule = args[0]
                     alice_ciphertext = args[1]
                     share_cfrags(usr_ip, alice_capsule, alice_ciphertext)
-                elif cmd == cmd_types.SEND_FRG:
-                    #TODO
-                    continue
+                elif cmd == cmd_types.SEND_FRG_SAMPLE:
+                    src_pubkey = args['client_pubkey']
+                    src_id = pk_to_id[src_pubkey]
+                    dst_pubkey = args['new_pubkey']
+                    dst_id = pk_to_id[dst_pubkey]
+                    khfrag_sample = args['khfrag_sample']
+                    khfrag_sample = [pre.KFrag.from_bytes(sample) for sample in khfrag_sample]
+                    print("Got the following kfrag samples {0}".format(khfrag_sample))
+                    key_fragment_arr.set_fragment(src_id, dst_id, khfrag_sample)
+                
                 elif cmd == cmd_types.SEND_PLAINTEXT:
                     args = request.args
                     msg_received = args['msg']
@@ -75,6 +85,7 @@ def clientthread(conn, addr):
  
 
 def share_cfrags(usr_ip, sender_capsule, sender_ciphertext):
+    global key_fragment_arr
     for clients in list_of_clients:
         if clients!=connection:
             try:
@@ -178,11 +189,13 @@ def register(ip, conn, new_client_pubkey):
     '''
     print("[BEGIN] Node Registration Routine")
     global ip_to_id
+    global pk_to_id
     usr_id = get_id()
     if ip in ip_to_id:
         print("Client already registered.")
     ip_to_id[ip] = (usr_id, new_client_pubkey, conn)
-    print("[REG STAGE ONE] Registered [id: "+ str(id)+ ", Pk: "+str(new_client_pubkey.to_bytes())+ ']')
+    pk_to_id[new_client_pubkey] = usr_id
+    print("[REG STAGE ONE] Registered [id: "+ str(usr_id)+ ", Pk: "+str(new_client_pubkey)+ ']')
     if len(ip_to_id) > 1:
         send_pks_to_client(ip,conn)
         notify_clients_of_new_user(new_client_pubkey, conn)

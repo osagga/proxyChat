@@ -28,7 +28,7 @@ def main():
     IP_address = str(sys.argv[1])
     Port = int(sys.argv[2])
     server.connect((IP_address, Port))
-    (user_priv_key, user_pub_key) = key_gen()
+    (user_priv_key, user_pub_key.to_bytes()) = key_gen()
 
     reg_req = Request.register_request(user_pub_key)
     ser_reg_req = reg_req.serialize()
@@ -69,12 +69,8 @@ def main():
                 elif cmd == cmd_types.NEW_USR:
                     print('[CLIENT] Received new pubkey, creating khfrag')
                     #Get the public key of the new user
-                    new_pubkey = args['new_pubkey']
+                    new_pubkey = keys.UmbralPublicKey args['new_pubkey']
                     #Compute the re-encryption keys
-
-                    bob_priv_key = keys.UmbralPrivateKey.gen_key()
-                    bob_pub_key = bob_priv_key.get_pubkey()
-
                     print("the type is" + str(type(new_pubkey)))
                     khfrags = pre.split_rekey(user_priv_key, bob_pub_key, THRESHOLD_M, THRESHOLD_N)
                     #Create a sample to distribute the shares to each Node                    
@@ -124,10 +120,10 @@ def main():
                     ser_reg = req.serialize()
                     server.send(ser_reg.encode(ENCODING))
                 else:
-                    ciphertext, sender_capsule = pre.encrypt(user_pub_key, message.encode(ENCODING))
+                    ciphertext, sender_capsule = pre.encrypt(keys.UmbralPublicKey.from_bytes(user_pub_key), message.encode(ENCODING))
                     print('Ciphertext of :' + message)
                     print(ciphertext)
-                    req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = user_pub_key)
+                    req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = keys.UmbralPublicKey.from_bytes(user_pub_key))
                     ser_req = req.serialize()
                     print(ser_req)
                     server.send(ser_req.encode(ENCODING))
