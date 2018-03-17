@@ -10,8 +10,8 @@ from threading import Thread
 from umbral import pre, keys, config, fragments
 
 ENCODING = "utf-8"
-NUM_CLIENTS = 100
-BUFFER_SIZE = 2048*9
+NUM_CLIENTS = 10
+BUFFER_SIZE = 2048*15
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
 pk_to_id = {} #Indexed by pk, returns id
@@ -19,6 +19,11 @@ key_fragment_arr = None #Indexed by [from][to] contains corresponding fragment
 available_ids = None
 list_of_clients = []
 ctr_id = 0
+
+
+def print_map():
+    for i in range(NUM_CLIENTS):
+        print("row [{}]".format(i), key_fragment_arr.key_fragment_arr[i])
 
 def clientthread(conn, addr):
     # sends a message to the client whose user object is conn
@@ -62,6 +67,7 @@ def clientthread(conn, addr):
                     khfrag_sample = [fragments.KFrag.from_bytes(sample) for sample in khfrag_sample]
                     # print("Got the following kfrag samples {0}".format(khfrag_sample))
                     key_fragment_arr.set_fragment(src_id, dst_id, khfrag_sample)
+                    print_map()
                 
                 # elif cmd == cmd_types.SEND_PLAINTEXT:
                 #     args = request.args

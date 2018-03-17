@@ -10,7 +10,7 @@ PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
 THRESHOLD_M = 10
 THRESHOLD_N = 20 
-BUFFER_SIZE = 2048*9
+BUFFER_SIZE = 2048*15
 client_public_keys = []
 def key_gen():
     config.set_default_curve()
@@ -67,8 +67,8 @@ def main():
                 args = request.args
                 print("[RECEIVED-CMD] : {0}".format(cmd))
                 if cmd == cmd_types.SEND_ALL_PKS:
-                    #TODO
                     pubkey_arr = args['pks']
+                    print("Received pks are {}".format(pubkey_arr))
                     for new_pubkey in pubkey_arr:
                         khfrags = pre.split_rekey(user_priv_key, keys.UmbralPublicKey.from_bytes(new_pubkey), THRESHOLD_M, THRESHOLD_N)
                         #Create a sample to distribute the shares to each Node                    
