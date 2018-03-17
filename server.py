@@ -17,6 +17,7 @@ ip_to_id = {} #Indexed by ip, returns (id,pk)
 key_fragment_arr = None #Indexed by [from][to] contains corresponding fragment
 available_ids = None
 list_of_clients = []
+ctr_id = 0
 
 def clientthread(conn, addr):
     # sends a message to the client whose user object is conn
@@ -96,31 +97,29 @@ def get_pubKey(args):
     else:
         raise ValueError("Can't find user PublicKey")
 
-# def remove(ip): 
-# '''
-# User of <ip> is remove from the chat 
-# '''
-# 	rem_id = ip_to_id[ip]
-	
-# 	for _from in key_fragment_arr: 
-# 		set_fragment(_from, rem_id, None)
-
-# 	for usr in all_users:
-# 		set_fragment(rem_id, usr, None)
-	
-# 	available_ids += [rem_id]
-
-def remove(connection):
-    """The following function simply removes the object
-    from the list that was created at the beginning of 
-    the program"""
+def remove(conn, ip): 
+'''
+User of <ip> is remove from the chat 
+'''
     if connection in list_of_clients:
         list_of_clients.remove(connection)
     return
+	# rem_id = ip_to_id[ip]
+	
+	# for _from in key_fragment_arr: 
+	# 	set_fragment(_from, rem_id, None)
+
+	# for usr in all_users:
+	# 	set_fragment(rem_id, usr, None)
+	
+	# available_ids += [rem_id]
 
 def register(ip, pubkey):
-    #TODO
-    print("TODO: add a user to the node")
+    global ip_to_id
+    usr_id = get_id()
+    if ip in ip_to_id:
+        print("Client already registered.")
+    ip_to_id[ip] = (usr_id, pubkey)
     return
 
 def init_ids():
@@ -128,6 +127,13 @@ def init_ids():
     available_ids = queue.Queue()
     return
 
+def get_id():
+    global ctr_id
+    if not available_ids.empty():
+        return available_ids.get()
+    else:
+        ctr_id += 1
+        return ctr_id 
 def main():
     """The first argument AF_INET is the address domain of the
     socket. This is used when we have an Internet Domain with
