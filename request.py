@@ -6,6 +6,7 @@ REGISTER = 'node_register'
 NEW_MSG = 'node_new_msg'
 SEND_FRG = 'usr_send_frag'
 USER_EXT = 'usr_exit'
+SEND_PLAINTEXT = 'usr_send_plaintext'
 
 #Will be in Node and Client
 class Request(object):
@@ -30,8 +31,14 @@ class Request(object):
 		pk_bytes = new_pub_key.to_bytes()
 		return cls(cmd = REGISTER, args = {'pub_key': pk_bytes})
 
+	@classmethod
+	def send_plaintext_request(cls, msg):
+		return cls(cmd = SEND_PLAINTEXT, args = {'msg': msg})
+
+
 
 def test_register_request():
+	config.set_default_curve()
 	#Create private and public keys 
 	priv_key = keys.UmbralPrivateKey.gen_key()
 	pub_key = priv_key.get_pubkey()
