@@ -10,7 +10,7 @@ PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
 THRESHOLD_M = 10
 THRESHOLD_N = 20 
-BUFFER_SIZE = 2048*15
+BUFFER_SIZE = 2048*30
 client_public_keys = []
 def key_gen():
     config.set_default_curve()

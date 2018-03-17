@@ -11,7 +11,7 @@ from umbral import pre, keys, config, fragments
 
 ENCODING = "utf-8"
 NUM_CLIENTS = 10
-BUFFER_SIZE = 2048*15
+BUFFER_SIZE = 2048*30
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
 pk_to_id = {} #Indexed by pk, returns id
@@ -169,6 +169,7 @@ def send_pks_to_client(ip, conn):
             # print('4')
             client_id = client_info[0]
             client_pubkey = client_info[1]
+            print("the type is {}".format(type(client_pubkey))
             pk_arr += [client_pubkey]
         else:
             print('[ERROR] in Registration step 2')
@@ -177,6 +178,7 @@ def send_pks_to_client(ip, conn):
     if(len(pk_arr)>0):
         req = Request.send_all_pks_request(pk_arr)
         ser_req = req.serialize()
+        conn.send(ser_req.encode(ENCODING))
         print('[REG STAGE TWO] Client Pks Found '+ ser_req)
     return
 
