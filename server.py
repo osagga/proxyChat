@@ -15,6 +15,7 @@ NEW_MSG = 'node_new_msg'
 SEND_FRG = 'usr_send_frag'
 USER_EXT = 'usr_exit'
 SEND_PLAINTEXT = 'usr_send_plaintext'
+SEND_ALL_PKS = 'send_all_client_pks_to_usr'
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
 key_fragment_arr = [[None for i in range(NUM_CLIENTS)] for j in range(NUM_CLIENTS)] #Indexed by [from][to] contains corresponding fragment
