@@ -102,7 +102,7 @@ def main():
                     for cfrag in cfrags:
                         bob_capsule.attach_cfrag(fragments.CapsuleFrag.from_bytes(cfrag))
                     message = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
-                    print("<{0}> {1}".format(alice_pub_key.to_bytes()[:10], msg_receivedmessage.decode(ENCODING))) 
+                    print("<{0}> {1}".format(alice_pub_key.to_bytes()[:10], message.decode(ENCODING))) 
                 # elif cmd == cmd_types.SEND_PLAINTEXT:
                 #     args = request.args
                 #     msg_received = args['msg']
