@@ -169,7 +169,7 @@ def send_pks_to_client(ip, conn):
             # print('4')
             client_id = client_info[0]
             client_pubkey = client_info[1]
-            print("the type is {}".format(type(client_pubkey))
+            print("the type is {}".format(type(client_pubkey)))
             pk_arr += [client_pubkey]
         else:
             print('[ERROR] in Registration step 2')

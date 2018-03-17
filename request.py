@@ -40,11 +40,9 @@ class Request(object):
 			3. Adds this to the args variable with key 'pks'
 			4. Initializes the request
 		'''
-		serPks_arr = [pk for pk in pk_arr]
 		#serPks_arr an array of serialized UmbralPublicKey. Array of strings
-		serialized_serPks_arr = jsonpickle.encode(serPks_arr)
 		#A string representing serPks_arr
-		req_args = {'pks':serialized_serPks_arr}
+		req_args = {'pks':pk_arr}
 		return cls(cmd = cmd_types.SEND_ALL_PKS, args = req_args)
 
 	@classmethod
