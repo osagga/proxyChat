@@ -24,52 +24,46 @@ def clientthread(conn, addr):
     # conn.send("Welcome to this chatroom!".encode(ENCODING))
     usr_ip = addr[0]
     while True:
-            try:
-                # Make sure that encoding will not violate the check on `message` below
-                message = conn.recv(BUFFER_SIZE)
-                if message:
-                    # Parse command
-                    try:
-                        request = Request.deserialize(message)
-                    except:
-                        raise ValueError("Can't deserialize JSON data")
-                    # print("The request I got is as follow {0}".format(request))
-                    cmd = request.cmd
-                    print("[RECEIVED-CMD] : {0}".format(cmd))
-                    if cmd == cmd_types.REGISTER:
-                        args = request.args
-                        pubKey = get_pubKey(args)
-                        register(usr_ip, conn, pubKey)
-                    elif cmd == cmd_types.NEW_MSG:
-                        #TODO
-                        continue
-                    elif cmd == cmd_types.SEND_FRG:
-                        #TODO
-                        continue
-                    elif cmd == cmd_types.SEND_PLAINTEXT:
-                        args = request.args
-                        msg_received = args['msg']
-                        # Calls broadcast function to send message to all
-                        message_to_send = "<" + usr_ip + "> " + msg_received
-                        print(message_to_send)
-                        new_req = Request.send_plaintext_request(message_to_send)
-                        broadcast(new_req.serialize(), conn)
-                    elif cmd == cmd_types.USER_EXT:
-                        print("I'm removing a client")
-                        remove(usr_ip, conn)
-                        #TODO
-                        continue
-                    else:
-                       print("Invalid command received")
+            # Make sure that encoding will not violate the check on `message` below
+            message = conn.recv(BUFFER_SIZE).decode(ENCODING)
+            if message:
+                # Parse command
+                try:
+                    request = Request.deserialize(message)
+                except:
+                    raise ValueError("Can't deserialize JSON data")
+                cmd = request.cmd
+                print("[RECEIVED-cmd] : {0}".format(cmd))
+                if cmd == cmd_types.REGISTER:
+                    args = request.args
+                    pubKey = get_pubKey(args)
+                    register(usr_ip, conn, pubKey)
+                elif cmd == cmd_types.NEW_MSG:
+                    #TODO
+                    continue
+                elif cmd == cmd_types.SEND_FRG:
+                    #TODO
+                    continue
+                elif cmd == cmd_types.SEND_PLAINTEXT:
+                    args = request.args
+                    msg_received = args['msg']
+                    # Calls broadcast function to send message to all
+                    message_to_send = "<" + usr_ip + "> " + msg_received
+                    print(message_to_send)
+                    new_req = Request.send_plaintext_request(message_to_send)
+                    broadcast(new_req.serialize(), conn)
+                elif cmd == cmd_types.USER_EXT:
+                    #TODO
+                    remove(usr_ip, conn)
+                    continue
                 else:
-                    """message may have no content if the connection
-                    is broken, in this case we remove the connection"""
-                    remove(conn)
- 
-            except:
-                print("MAIN ERROR")
+                    print("Invalid command received")
+            else:
+                """message may have no content if the connection
+                is broken, in this case we remove the connection"""
+                # print("The message is {}".format(message))
+                remove(usr_ip, conn)
                 exit()
-                continue
  
 def broadcast(message, connection):
     """Using the below function, we broadcast the message to all
@@ -80,9 +74,10 @@ def broadcast(message, connection):
             try:
                 clients.send(message.encode(ENCODING))
             except:
+                print("BROADCAST FAILED!")
                 clients.close()
                 # if the link is broken, we remove the client
-                remove(clients)
+                remove(clients, connection)
 
 def notify_user(cmd, user_id, npk):
     #TODO
@@ -157,14 +152,19 @@ def register(ip, conn, new_client_pubkey):
         print("Client already registered.")
     ip_to_id[ip] = (usr_id, new_client_pubkey, conn)
     print("[REG STAGE ONE] Registered [id: "+ str(id)+ ", Pk: "+str(new_client_pubkey.to_bytes())+ ']')
-    send_pks_to_client(ip,conn)
-    notify_clients_of_new_user(new_client_pubkey, conn)
+    if len(ip_to_id) > 1:
+        send_pks_to_client(ip,conn)
+        notify_clients_of_new_user(new_client_pubkey, conn)
     return
 
 def notify_clients_of_new_user(new_client_pubkey, conn):
+    message_to_send = "New user joined!!!!"
+    new_req = Request.send_plaintext_request(message_to_send)
     req = Request.send_new_user_notify_request(new_client_pubkey)
+    broadcast(new_req.serialize(), conn)
     ser_req = req.serialize()
-    print("[BEGIN] Broadcast New User Request to Clients " + ser_req)
+    print(message_to_send)
+    print("[BEGIN] Broadcast New User Request to Clients ")
     broadcast(ser_req, conn)
 
 def init_ids():

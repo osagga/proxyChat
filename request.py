@@ -57,8 +57,7 @@ class Request(object):
 
 	@classmethod
 	def send_new_user_notify_request(cls, new_user_pubkey):
-		new_pubkey_ser = new_user_pubkey.to_bytes()
-		req_args = {'new_pubkey' : new_pubkey_ser}
+		req_args = {'new_pubkey' : new_user_pubkey}
 		return cls(cmd = cmd_types.NEW_USR, args = req_args)
 
 def test_register_request():
