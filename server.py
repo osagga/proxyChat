@@ -48,7 +48,7 @@ def clientthread(conn, addr):
                         continue
                     elif cmd == cmd_types.SEND_PLAINTEXT:
                         args = request.args
-                        msg_received = args['msg']                        
+                        msg_received = args['msg']
                         # Calls broadcast function to send message to all
                         message_to_send = "<" + usr_ip + "> " + msg_received
                         print(message_to_send)
@@ -146,7 +146,7 @@ def send_pks_to_client(ip, conn):
         print('[REG STAGE TWO] Client Pks Found '+ ser_req)
     return
 
-def register(ip, conn, pubkey):
+def register(ip, conn, new_client_pubkey):
     '''
         Registration phase 1 
     '''
@@ -155,10 +155,17 @@ def register(ip, conn, pubkey):
     usr_id = get_id()
     if ip in ip_to_id:
         print("Client already registered.")
-    ip_to_id[ip] = (usr_id, pubkey, conn)
-    print("[REG STAGE ONE] Registered [id: "+ str(id)+ ", Pk: "+str(pubkey.to_bytes())+ ']')
+    ip_to_id[ip] = (usr_id, new_client_pubkey, conn)
+    print("[REG STAGE ONE] Registered [id: "+ str(id)+ ", Pk: "+str(new_client_pubkey.to_bytes())+ ']')
     send_pks_to_client(ip,conn)
+    notify_clients_of_new_user(new_client_pubkey, conn)
     return
+
+def notify_clients_of_new_user(new_client_pubkey, conn):
+    req = Request.send_new_user_notify_request(new_client_pubkey)
+    ser_req = req.serialize()
+    print("[BEGIN] Broadcast New User Request to Clients " + ser_req)
+    broadcast(ser_req, conn)
 
 def init_ids():
     global available_ids

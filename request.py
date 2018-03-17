@@ -32,6 +32,7 @@ class Request(object):
 	@classmethod
 	def send_all_pks_request(cls, pk_arr):
 		'''
+			TODO TEST THIS
 			pk_arr contain an array of UmbralPublicKey instances
 			This function
 			1. Serializes each UmbralPublicKey with .to_bytes()
@@ -53,6 +54,12 @@ class Request(object):
 		req_args['sender_capsule'] = sender_capsule
 		req_args['sender_publickey'] = sender_publickey
 		return cls(cmd = cmd_types.NEW_MSG, args = req_args)
+
+	@classmethod
+	def send_new_user_notify_request(cls, new_user_pubkey):
+		new_pubkey_ser = new_user_pubkey.to_bytes()
+		req_args = {'new_pubkey' : new_pubkey_ser}
+		return cls(cmd = cmd_types.NEW_USR, args = req_args)
 
 def test_register_request():
 	config.set_default_curve()

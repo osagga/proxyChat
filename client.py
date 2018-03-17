@@ -8,7 +8,7 @@ from umbral import pre, keys, config
 
 PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
- 
+client_public_keys = []
 def key_gen():
     config.set_default_curve()
     priv_key = keys.UmbralPrivateKey.gen_key()
