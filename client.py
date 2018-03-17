@@ -102,11 +102,11 @@ def main():
                     for cfrag in cfrags:
                         bob_capsule.attach_cfrag(fragments.CapsuleFrag.from_bytes(cfrag))
                     message = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
-                    print(message)
+                    print(message.decode(ENCODING))
                 elif cmd == cmd_types.SEND_PLAINTEXT:
                     args = request.args
                     msg_received = args['msg']
-                    print(msg_received.decode(ENCODING))
+                    print(msg_received)
                 else:
                     print("Invalid command received")
             else:
