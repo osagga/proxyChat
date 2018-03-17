@@ -10,7 +10,7 @@ PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
 THRESHOLD_M = 10
 THRESHOLD_N = 20 
-BUFFER_SIZE = 2048*3
+BUFFER_SIZE = 2048*9
 client_public_keys = []
 def key_gen():
     config.set_default_curve()
@@ -55,7 +55,7 @@ def main():
         for socks in read_sockets:
             if socks == server:
                 message = socks.recv(BUFFER_SIZE).decode(ENCODING)
-                print("The message is {}".format(message))
+                # print("The message is {}".format(message))
                 # Parse command
                 try:
                     request = Request.deserialize(message)
@@ -74,7 +74,7 @@ def main():
                     #Get the public key of the new user
                     new_pubkey = args['new_pubkey']
                     #Compute the re-encryption keys
-                    print("the type is" + str(type(new_pubkey)))
+                    # print("the type is" + str(type(new_pubkey)))
                     khfrags = pre.split_rekey(user_priv_key, keys.UmbralPublicKey.from_bytes(new_pubkey), THRESHOLD_M, THRESHOLD_N)
                     #Create a sample to distribute the shares to each Node                    
                     khfrags_sample = []
@@ -103,10 +103,10 @@ def main():
                         bob_capsule.attach_cfrag(fragments.CapsuleFrag.from_bytes(cfrag))
                     message = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
                     print(message.decode(ENCODING))
-                elif cmd == cmd_types.SEND_PLAINTEXT:
-                    args = request.args
-                    msg_received = args['msg']
-                    print(msg_received)
+                # elif cmd == cmd_types.SEND_PLAINTEXT:
+                #     args = request.args
+                #     msg_received = args['msg']
+                #     print(msg_received)
                 else:
                     print("Invalid command received")
             else:
@@ -125,11 +125,11 @@ def main():
                 else:
                     ciphertext, sender_capsule = pre.encrypt(keys.UmbralPublicKey.from_bytes(user_pub_key), message.encode(ENCODING))
                     sender_capsule = sender_capsule.to_bytes()
-                    print('Ciphertext of :' + message)
-                    print(ciphertext)
+                    # print('Ciphertext of :' + message)
+                    # print(ciphertext)
                     req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = user_pub_key)
                     ser_req = req.serialize()
-                    print(ser_req)
+                    # print(ser_req)
                     server.send(ser_req.encode(ENCODING))
                 sys.stdout.write("<You>")
                 sys.stdout.write(message)

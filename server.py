@@ -30,7 +30,7 @@ def clientthread(conn, addr):
             message = conn.recv(BUFFER_SIZE).decode(ENCODING)
             if message:
                 # Parse command
-                print("The message I'm parsing is {}".format(message))
+                # print("The message I'm parsing is {}".format(message))
                 try:
                     request = Request.deserialize(message)
                 except:
@@ -60,17 +60,17 @@ def clientthread(conn, addr):
                     dst_id = pk_to_id[dst_pubkey]
                     khfrag_sample = args['khfrag_sample']
                     khfrag_sample = [fragments.KFrag.from_bytes(sample) for sample in khfrag_sample]
-                    print("Got the following kfrag samples {0}".format(khfrag_sample))
+                    # print("Got the following kfrag samples {0}".format(khfrag_sample))
                     key_fragment_arr.set_fragment(src_id, dst_id, khfrag_sample)
                 
-                elif cmd == cmd_types.SEND_PLAINTEXT:
-                    args = request.args
-                    msg_received = args['msg']
-                    # Calls broadcast function to send message to all
-                    message_to_send = "<" + usr_ip + "> " + msg_received
-                    print(message_to_send)
-                    new_req = Request.send_plaintext_request(message_to_send)
-                    broadcast(new_req.serialize(), conn)
+                # elif cmd == cmd_types.SEND_PLAINTEXT:
+                #     args = request.args
+                #     msg_received = args['msg']
+                #     # Calls broadcast function to send message to all
+                #     message_to_send = "<" + usr_ip + "> " + msg_received
+                #     print(message_to_send)
+                #     new_req = Request.send_plaintext_request(message_to_send)
+                #     broadcast(new_req.serialize(), conn)
                 elif cmd == cmd_types.USER_EXT:
                     #TODO
                     remove(usr_ip, conn)
@@ -92,7 +92,7 @@ def share_cfrags(usr_pk, sender_capsule, sender_ciphertext, connection):
             # try:
             # get sender PK from ip
             src_pk = usr_pk
-            print("my type is {}".format(type(src_pk)))
+            # print("my type is {}".format(type(src_pk)))
             src_id = pk_to_id[src_pk]
             dst_ip = clients.getpeername()[0]
             dst_id = ip_to_id[dst_ip][0]
@@ -101,7 +101,7 @@ def share_cfrags(usr_pk, sender_capsule, sender_ciphertext, connection):
             # Compute the cfrag
             cfrags = [pre.reencrypt(kfrag, sender_capsule).to_bytes() for kfrag in kfrags]
             # Send the sender_capsule, cfrag, senderPk, sender_ciphertext
-            req = Request.send_cfrag_request(sender_capsule, cfrags, src_pk, sender_ciphertext)
+            req = Request.send_cfrag_request(sender_capsule.to_bytes(), cfrags, src_pk, sender_ciphertext)
             clients.send(req.serialize().encode(ENCODING))
             # except:
             #     print("cfrag sharing FAILED!")
@@ -154,13 +154,13 @@ def send_pks_to_client(ip, conn):
     pk_arr = []
 
     for client_ip in ip_to_id:
-        print('2')
+        # print('2')
         client_info = ip_to_id[client_ip]
         if(client_ip == ip):
-            print('3')
+            # print('3')
             continue;
         elif(len(client_info) == 3 ):
-            print('4')
+            # print('4')
             client_id = client_info[0]
             client_pubkey = client_info[1]
             pk_arr += [client_pubkey]
