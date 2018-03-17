@@ -126,7 +126,7 @@ def main():
                     ciphertext, sender_capsule = pre.encrypt(keys.UmbralPublicKey.from_bytes(user_pub_key), message.encode(ENCODING))
                     print('Ciphertext of :' + message)
                     print(ciphertext)
-                    req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = keys.UmbralPublicKey.from_bytes(user_pub_key))
+                    req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = user_pub_key)
                     ser_req = req.serialize()
                     print(ser_req)
                     server.send(ser_req.encode(ENCODING))

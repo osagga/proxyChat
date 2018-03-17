@@ -11,7 +11,7 @@ from umbral import keys, config, fragments
 
 ENCODING = "utf-8"
 NUM_CLIENTS = 100
-BUFFER_SIZE = 2048*3
+BUFFER_SIZE = 2048*9
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
 pk_to_id = {} #Indexed by pk, returns id
@@ -52,7 +52,7 @@ def clientthread(conn, addr):
                     alice_capsule = args['sender_capsule']
                     alice_ciphertext = args['ciphertext']
                     alice_pk = args['sender_publickey']
-                    share_cfrags(alice_pk, alice_capsule, alice_ciphertext)
+                    share_cfrags(alice_pk, alice_capsule, alice_ciphertext, conn)
                 elif cmd == cmd_types.SEND_FRG_SAMPLE:
                     src_pubkey = args['client_pubkey']
                     src_id = pk_to_id[src_pubkey]
@@ -85,28 +85,29 @@ def clientthread(conn, addr):
                 exit()
  
 
-def share_cfrags(usr_pk, sender_capsule, sender_ciphertext):
+def share_cfrags(usr_pk, sender_capsule, sender_ciphertext, connection):
     global key_fragment_arr
     for clients in list_of_clients:
         if clients!=connection:
-            try:
-                # get sender PK from ip
-                src_pk = usr_pk
-                src_id = pk_to_id[src_pk]
-                dst_ip = clients.getpeername()[0]
-                dst_id = ip_to_id[dst_ip][0]
-                # get kfrag for sender and clients
-                kfrags = key_frag_map.get_fragment(src_id, dst_id)
-                # Compute the cfrag
-                cfrags = [pre.reencrypt(kfrag, sender_capsule).to_bytes() for kfrag in kfrags]
-                # Send the sender_capsule, cfrag, senderPk, sender_ciphertext
-                req = Request.send_cfrag_request(sender_capsule, cfrags, src_pk, sender_ciphertext)
-                clients.send(req.serialize().encode(ENCODING))
-            except:
-                print("cfrag sharing FAILED!")
-                clients.close()
-                # if the link is broken, we remove the client
-                remove(clients, connection)
+            # try:
+            # get sender PK from ip
+            src_pk = usr_pk
+            print("my type is {}".format(type(src_pk)))
+            src_id = pk_to_id[src_pk]
+            dst_ip = clients.getpeername()[0]
+            dst_id = ip_to_id[dst_ip][0]
+            # get kfrag for sender and clients
+            kfrags = key_frag_map.get_fragment(src_id, dst_id)
+            # Compute the cfrag
+            cfrags = [pre.reencrypt(kfrag, sender_capsule).to_bytes() for kfrag in kfrags]
+            # Send the sender_capsule, cfrag, senderPk, sender_ciphertext
+            req = Request.send_cfrag_request(sender_capsule, cfrags, src_pk, sender_ciphertext)
+            clients.send(req.serialize().encode(ENCODING))
+            # except:
+            #     print("cfrag sharing FAILED!")
+            #     clients.close()
+            #     # if the link is broken, we remove the client
+            #     remove(clients, connection)
     
 def broadcast(message, connection):
     """Using the below function, we broadcast the message to all
