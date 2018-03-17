@@ -1,3 +1,4 @@
 .vscode/settings.json
 __pycache__/request.cpython-35.pyc
 request.pyc
+__pycache__/key_fragments_map.cpython-35.pyc
