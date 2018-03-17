@@ -2,20 +2,16 @@
 from socket import socket, SOL_SOCKET, SO_REUSEADDR, AF_INET, SOCK_STREAM
 from request import Request
 from key_fragments_map import key_frag_map
+import cmd_types
 import select
 import sys
 import queue
 from threading import Thread
-from umbral import keys
+from umbral import keys, config
 
 ENCODING = "utf-8"
 NUM_CLIENTS = 100
 BUFFER_SIZE = 2048
-REGISTER = 'node_new_user'
-NEW_MSG = 'node_new_msg'
-SEND_FRG = 'usr_send_frag'
-USER_EXT = 'usr_exit'
-SEND_PLAINTEXT = 'usr_send_plaintext'
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
 key_fragment_arr = None #Indexed by [from][to] contains corresponding fragment
@@ -40,42 +36,36 @@ def clientthread(conn, addr):
                     # print("The request I got is as follow {0}".format(request))
                     cmd = request.cmd
                     print("[RECEIVED-CMD] : {0}".format(cmd))
-                    
-                    if cmd == REGISTER:
-                        print("I'm now in Register")
+                    if cmd == cmd_types.REGISTER:
                         ip = addr[0]
                         args = request.args
                         pubKey = get_pubKey(args)
                         register(ip, pubKey)
-                    elif cmd == NEW_MSG:
+                    elif cmd == cmd_types.NEW_MSG:
                         #TODO
                         continue
-                    elif cmd == SEND_FRG:
+                    elif cmd == cmd_types.SEND_FRG:
                         #TODO
                         continue
-                    elif cmd == USER_EXT:
+                    elif cmd == cmd_types.USER_EXT:
                         #TODO
                         continue
-                    elif cmd == SEND_PLAINTEXT:
+                    elif cmd == cmd_types.SEND_PLAINTEXT:
                         args = request.args
                         msg_received = args['msg']
-                        # IF Add
                         print("<" + addr[0] + "> " + msg_received)
                         # Calls broadcast function to send message to all
                         message_to_send = "<" + addr[0] + "> " + msg_received
                         broadcast(message_to_send, conn)
                     else:
-                        # IF Add
-                        print("<" + addr[0] + "> " + message)
-                        # Calls broadcast function to send message to all
-                        message_to_send = "<" + addr[0] + "> " + message
-                        broadcast(message_to_send, conn)
+                       print("Invalid command received")
                 else:
                     """message may have no content if the connection
                     is broken, in this case we remove the connection"""
                     remove(conn)
  
             except:
+                print("MAIN ERROR")
                 continue
  
 def broadcast(message, connection):
@@ -100,6 +90,7 @@ def get_pubKey(args):
     '''
         Get the publicKey from the user passed args
     '''
+    config.set_default_curve()
     if 'pub_key' in args:
         return keys.UmbralPublicKey.from_bytes(args['pub_key'])
     else:
@@ -129,7 +120,8 @@ def remove(connection):
 
 def register(ip, pubkey):
     #TODO
-    print("I'm adding a user to the set!!")
+    print("TODO: add a user to the node")
+    return
 
 def init_ids():
     global available_ids
