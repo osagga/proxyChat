@@ -112,7 +112,7 @@ def main():
                     req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = user_pub_key)
                     ser_req = req.serialize()
                     print(ser_req)
-                    server.send(ser_reg.encode(ENCODING))
+                    server.send(ser_req.encode(ENCODING))
                 sys.stdout.write("<You>")
                 sys.stdout.write(message)
                 sys.stdout.flush()
