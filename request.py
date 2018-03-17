@@ -56,6 +56,15 @@ class Request(object):
 		return cls(cmd = cmd_types.NEW_MSG, args = req_args)
 
 	@classmethod
+	def send_cfrag_request(sender_capsule, cfrag, sender_publickey, sender_ciphertext):
+		req_args = {}
+		req_args['ciphertext'] = sender_ciphertext
+		req_args['cfrag'] = cfrag
+		req_args['sender_capsule'] = sender_capsule
+		req_args['sender_publickey'] = sender_publickey
+		return cls(cmd = cmd_types.MSG_TO_USER, args = req_args)
+	
+	@classmethod
 	def send_new_user_notify_request(cls, new_user_pubkey):
 		req_args = {'new_pubkey' : new_user_pubkey}
 		return cls(cmd = cmd_types.NEW_USR, args = req_args)

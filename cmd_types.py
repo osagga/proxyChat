@@ -2,6 +2,8 @@
 
 REGISTER = 'node_register'
 NEW_MSG = 'node_new_msg'
+MSG_TO_NODE = 'msg_to_node'
+MSG_TO_USER = 'msg_to_user'
 NEW_USR = "node_new_usr"
 SEND_FRG = 'usr_send_frag'
 USER_EXT = 'usr_exit'

@@ -33,14 +33,22 @@ def clientthread(conn, addr):
                 except:
                     raise ValueError("Can't deserialize JSON data")
                 cmd = request.cmd
+                args = request.args
                 print("[RECEIVED-cmd] : {0}".format(cmd))
                 if cmd == cmd_types.REGISTER:
-                    args = request.args
                     pubKey = get_pubKey(args)
                     register(usr_ip, conn, pubKey)
-                elif cmd == cmd_types.NEW_MSG:
-                    #TODO
-                    continue
+                    # Ask the user for kfrags (after sending all PKs)
+                elif cmd == cmd_types.MSG_TO_USER:
+                    ''' 
+                    User should expect the follow from the user:
+                        - ciphertext
+                        - capsoule
+                    Now we go through all the other users and compute cfrag for each, and send it
+                    '''
+                    alice_capsule = args[0]
+                    alice_ciphertext = args[1]
+                    share_cfrags(usr_ip, alice_capsule, alice_ciphertext)
                 elif cmd == cmd_types.SEND_FRG:
                     #TODO
                     continue
@@ -65,6 +73,29 @@ def clientthread(conn, addr):
                 remove(usr_ip, conn)
                 exit()
  
+
+def share_cfrags(usr_ip, sender_capsule, sender_ciphertext):
+    for clients in list_of_clients:
+        if clients!=connection:
+            try:
+                # get sender PK from ip
+                src_pk = ip_to_id[ip][1]
+                src_id = ip_to_id[ip][0]
+                dst_ip = clients.getpeername()[0]
+                dst_id = ip_to_id[dst_ip][0]
+                # get kfrag for sender and clients
+                kfrag = key_frag_map.get_fragment(src_id, dst_id)
+                # Compute the cfrag
+                cfrag = pre.reencrypt(kfrag, sender_capsule)
+                # Send the sender_capsule, cfrag, senderPk, sender_ciphertext
+                req = Request.send_cfrag_request(sender_capsule, cfrag, src_pk, sender_ciphertext)
+                clients.send(req.serialize().encode(ENCODING))
+            except:
+                print("cfrag sharing FAILED!")
+                clients.close()
+                # if the link is broken, we remove the client
+                remove(clients, connection)
+    
 def broadcast(message, connection):
     """Using the below function, we broadcast the message to all
     clients who's object is not the same as the one sending

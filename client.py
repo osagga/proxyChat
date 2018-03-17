@@ -67,29 +67,23 @@ def main():
                 elif cmd == cmd_types.NEW_USR:
                     #TODO
                     continue
-                elif cmd == cmd_types.NEW_MSG:
+                elif cmd == cmd_types.MSG_TO_USER:
                     '''
                         Args should contain three things:
-                            - Alice's IP
+                            - Alice's PK
                             - Alice's capsule (encryptes symetric key)
                             - Alice's ciphertext
                             - cfrag/s (one from each node)
                     '''
-                    A_IP = args[0]
-                    A_capsule = args[1]
+                    alice_pub_key = args['sender_publickey']
+                    A_capsule = args['sender_capsule']
                     bob_capsule = A_capsule #This is just to stick to the demo
-                    A_ciphertext = args[2]
-                    cfrags = args[3]
+                    A_ciphertext = args['ciphertext']
+                    cfrags = [args['cfrag']]
                     for cfrag in cfrags:
                         bob_capsule.attach_cfrag(cfrag)
-                    if A_IP in ip_to_pk:
-                        alice_pub_key = ip_to_pk[A_IP]
-                    else:
-                        print("Missing sender's PublicKey (Can't decrypt the recived)")
                     message = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
                     print(message)
-                    #TODO
-                    continue
                 elif cmd == cmd_types.SEND_PLAINTEXT:
                     args = request.args
                     msg_received = args['msg']
