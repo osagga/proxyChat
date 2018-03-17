@@ -1,6 +1,7 @@
 # Python program to implement server side of chat room.
 from socket import socket, SOL_SOCKET, SO_REUSEADDR, AF_INET, SOCK_STREAM
 from request import Request
+from key_fragments_map import key_frag_map
 import select
 import sys
 import queue
@@ -17,8 +18,8 @@ SEND_FRG = 'usr_send_frag'
 USER_EXT = 'usr_exit'
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
-key_fragment_arr = [[None for i in range(NUM_CLIENTS)] for j in range(NUM_CLIENTS)] #Indexed by [from][to] contains corresponding fragment
-available_ids = queue.Queue() #queue containing the available ids
+key_fragment_arr = None #Indexed by [from][to] contains corresponding fragment
+available_ids = None
 list_of_clients = []
 
 def clientthread(conn, addr):
@@ -34,9 +35,9 @@ def clientthread(conn, addr):
                     try:
                         request = Request.deserialize(message)
                     except:
-                        print("THIS IS AN ERROR")
+                        raise ValueError("Can't deserialize JSON data")
 
-                    print("The request I got is as follow {0}".format(request))
+                    # print("The request I got is as follow {0}".format(request))
                     cmd = request.cmd
                     if cmd == REGISTER:
                         print("I'm now in Register")
@@ -119,13 +120,10 @@ def remove(connection):
 def register(ip, pubkey):
     #TODO
     print("I'm adding a user to the set!!")
- 
-def set_fragment(_from, to, frag):
-    """
-        The following function adds the given key frag 
-        to the appropiate position in the frag dict
-    """
-    key_fragment_arr[_from][to] = frag
+
+def init_ids():
+    global available_ids
+    available_ids = queue.Queue()
     return
 
 def main():
@@ -134,6 +132,12 @@ def main():
     any two hosts The second argument is the type of socket.
     SOCK_STREAM means that data or characters are read in
     a continuous flow."""
+    global key_fragment_arr
+
+    init_ids() #queue containing the available ids
+    
+    key_fragment_arr = key_frag_map(NUM_CLIENTS)
+
     server = socket(AF_INET, SOCK_STREAM)
     server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     
