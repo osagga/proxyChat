@@ -10,6 +10,7 @@ PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
 THRESHOLD_M = 10
 THRESHOLD_N = 20 
+BUFFER_SIZE = 2048*3
 client_public_keys = []
 def key_gen():
     config.set_default_curve()
@@ -53,7 +54,7 @@ def main():
 
         for socks in read_sockets:
             if socks == server:
-                message = socks.recv(2048).decode(ENCODING)
+                message = socks.recv(BUFFER_SIZE).decode(ENCODING)
                 print("The message is {}".format(message))
                 # Parse command
                 try:

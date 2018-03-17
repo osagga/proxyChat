@@ -42,7 +42,7 @@ def clientthread(conn, addr):
                     pubKey = args['pub_key']
                     register(usr_ip, conn, pubKey)
                     # Ask the user for kfrags (after sending all PKs)
-                elif cmd == cmd_types.MSG_TO_USER:
+                elif cmd == cmd_types.MSG_TO_NODE:
                     ''' 
                     User should expect the follow from the user:
                         - ciphertext

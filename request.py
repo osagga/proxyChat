@@ -53,7 +53,7 @@ class Request(object):
 		req_args['ciphertext'] = ciphertext
 		req_args['sender_capsule'] = sender_capsule
 		req_args['sender_publickey'] = sender_publickey
-		return cls(cmd = cmd_types.NEW_MSG, args = req_args)
+		return cls(cmd = cmd_types.MSG_TO_NODE, args = req_args)
 
 	@classmethod
 	def send_cfrag_request(cls, sender_capsule, cfrag, sender_publickey, sender_ciphertext):
