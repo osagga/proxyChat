@@ -29,7 +29,22 @@ class Request(object):
 	def send_plaintext_request(cls, msg):
 		return cls(cmd = cmd_types.SEND_PLAINTEXT, args = {'msg': msg})
 
-
+	@classmethod
+	def send_all_pks_request(cls, pk_arr):
+		'''
+			pk_arr contain an array of UmbralPublicKey instances
+			This function
+			1. Serializes each UmbralPublicKey with .to_bytes()
+			2. Serializes the array of the serialized UmbralPublicKey 
+			3. Adds this to the args variable with key 'pks'
+			4. Initializes the request
+		'''
+		serPks_arr = [pk.to_bytes() for pk in pk_arr]
+		#serPks_arr an array of serialized UmbralPublicKey. Array of strings
+		serialized_serPks_arr = jsonpickle.encode(serPks_arr)
+		#A string representing serPks_arr
+		req_args = {'pks':serialized_serPks_arr}
+		return cls(cmd = SEND_ALL_PKS, args = req_args)
 
 def test_register_request():
 	config.set_default_curve()

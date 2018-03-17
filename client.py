@@ -55,7 +55,7 @@ while True:
             req = Request.send_plaintext_request(message)
             ser_reg = req.serialize()
             server.send(ser_reg.encode(ENCODING))
-            
+
             sys.stdout.write("<You>")
             sys.stdout.write(message)
             sys.stdout.flush()
