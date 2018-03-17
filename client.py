@@ -6,8 +6,10 @@ import cmd_types
 from request import Request
 from umbral import pre, keys, config
 
-PROXY_ENCRYPTION_DISABLED = True
+PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
+THRESHOLD_M = 10
+THRESHOLD_N = 20 
 client_public_keys = []
 def key_gen():
     config.set_default_curve()
@@ -65,7 +67,20 @@ def main():
                     #TODO
                     continue
                 elif cmd == cmd_types.NEW_USR:
-                    #TODO
+                    print('[CLIENT] Received new pubkey, creating khfrag')
+                    #Get the public key of the new user
+                    new_pubkey = args['new_pubkey']
+                    #Compute the re-encryption keys
+                    khfrags = pre.split_rekey(user_priv_key, new_pubkey, THRESHOLD_M, THRESHOLD_N)
+                    #Create a sample to distribute the shares to each Node                    
+                    khfrags_sample = []
+                    for i in range(0,THRESHOLD_M):
+                        khfrags_sample += [khfrags[i]]
+                    #Create the request
+                    req = Request.send_new_user_khfrag_samples_request(client_pubkey = user_pub_key, new_user_pubkey = new_pubkey, khfrag_sample = khfrags_sample)
+                    req_ser = khfrag_sample_req.serialize()
+                    print('[CLIENT] Created KhFrag Sample Request = ' + req_ser)
+                    server.send(req_ser.encode(ENCODING))
                     continue
                 elif cmd == cmd_types.MSG_TO_USER:
                     '''
