@@ -141,9 +141,10 @@ def main():
 
                     # Decrypting the ciphertext
                     plaintext = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
-                    
+
                     print("<{0}> {1}".format(alice_pub_key.to_bytes()[:10], plaintext.decode(ENCODING))) 
                 else:
+                    print(cmd)
                     print("Invalid command received")
             else:
                 # Here we do the Enryption (on the user input)
