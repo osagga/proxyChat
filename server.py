@@ -98,9 +98,9 @@ def get_pubKey(args):
         raise ValueError("Can't find user PublicKey")
 
 def remove(conn, ip): 
-'''
-User of <ip> is remove from the chat 
-'''
+    '''
+        User of <ip> is remove from the chat 
+    '''
     if connection in list_of_clients:
         list_of_clients.remove(connection)
     return
@@ -113,6 +113,7 @@ User of <ip> is remove from the chat
 	# 	set_fragment(rem_id, usr, None)
 	
 	# available_ids += [rem_id]
+    
 
 def register(ip, pubkey):
     global ip_to_id
@@ -120,6 +121,7 @@ def register(ip, pubkey):
     if ip in ip_to_id:
         print("Client already registered.")
     ip_to_id[ip] = (usr_id, pubkey)
+    send_client_pks()
     return
 
 def init_ids():
@@ -134,6 +136,7 @@ def get_id():
     else:
         ctr_id += 1
         return ctr_id 
+
 def main():
     """The first argument AF_INET is the address domain of the
     socket. This is used when we have an Internet Domain with
