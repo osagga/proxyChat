@@ -22,7 +22,7 @@ class Request(object):
 		return : 
 			Request class instance 
 		'''
-		pk_bytes = new_pub_key.to_bytes()
+		pk_bytes = new_pub_key
 		return cls(cmd = cmd_types.REGISTER, args = {'pub_key': pk_bytes})
 
 	@classmethod
@@ -40,7 +40,7 @@ class Request(object):
 			3. Adds this to the args variable with key 'pks'
 			4. Initializes the request
 		'''
-		serPks_arr = [pk.to_bytes() for pk in pk_arr]
+		serPks_arr = [pk for pk in pk_arr]
 		#serPks_arr an array of serialized UmbralPublicKey. Array of strings
 		serialized_serPks_arr = jsonpickle.encode(serPks_arr)
 		#A string representing serPks_arr
