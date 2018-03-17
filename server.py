@@ -49,9 +49,10 @@ def clientthread(conn, addr):
                         - capsoule
                     Now we go through all the other users and compute cfrag for each, and send it
                     '''
-                    alice_capsule = args[0]
-                    alice_ciphertext = args[1]
-                    share_cfrags(usr_ip, alice_capsule, alice_ciphertext)
+                    alice_capsule = args['sender_capsule']
+                    alice_ciphertext = args['ciphertext']
+                    alice_pk = args['sender_publickey']
+                    share_cfrags(alice_pk, alice_capsule, alice_ciphertext)
                 elif cmd == cmd_types.SEND_FRG_SAMPLE:
                     src_pubkey = args['client_pubkey']
                     src_id = pk_to_id[src_pubkey]
@@ -84,22 +85,22 @@ def clientthread(conn, addr):
                 exit()
  
 
-def share_cfrags(usr_ip, sender_capsule, sender_ciphertext):
+def share_cfrags(usr_pk, sender_capsule, sender_ciphertext):
     global key_fragment_arr
     for clients in list_of_clients:
         if clients!=connection:
             try:
                 # get sender PK from ip
-                src_pk = ip_to_id[ip][1]
-                src_id = ip_to_id[ip][0]
+                src_pk = usr_pk
+                src_id = pk_to_id[src_pk]
                 dst_ip = clients.getpeername()[0]
                 dst_id = ip_to_id[dst_ip][0]
                 # get kfrag for sender and clients
-                kfrag = key_frag_map.get_fragment(src_id, dst_id)
+                kfrags = key_frag_map.get_fragment(src_id, dst_id)
                 # Compute the cfrag
-                cfrag = pre.reencrypt(kfrag, sender_capsule)
+                cfrags = [pre.reencrypt(kfrag, sender_capsule).to_bytes() for kfrag in kfrags]
                 # Send the sender_capsule, cfrag, senderPk, sender_ciphertext
-                req = Request.send_cfrag_request(sender_capsule, cfrag, src_pk, sender_ciphertext)
+                req = Request.send_cfrag_request(sender_capsule, cfrags, src_pk, sender_ciphertext)
                 clients.send(req.serialize().encode(ENCODING))
             except:
                 print("cfrag sharing FAILED!")

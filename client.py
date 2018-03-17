@@ -4,7 +4,7 @@ import select
 import sys
 import cmd_types
 from request import Request
-from umbral import pre, keys, config
+from umbral import pre, keys, config, fragments
 
 PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
@@ -98,9 +98,9 @@ def main():
                     A_capsule = args['sender_capsule']
                     bob_capsule = A_capsule #This is just to stick to the demo
                     A_ciphertext = args['ciphertext']
-                    cfrags = [args['cfrag']]
+                    cfrags = args['cfrag']
                     for cfrag in cfrags:
-                        bob_capsule.attach_cfrag(cfrag)
+                        bob_capsule.attach_cfrag(fragments.CapsuleFrag.from_bytes(cfrag))
                     message = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
                     print(message)
                 elif cmd == cmd_types.SEND_PLAINTEXT:
