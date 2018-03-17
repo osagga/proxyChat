@@ -62,11 +62,11 @@ class Request(object):
 
 
 	@classmethod
-	def respond_new_user_notify_request(cls, client_pubkey ,new_user_pubkey, oldClient_newUser_khfrag_sample):
+	def send_new_user_khfrag_samples_request(cls, client_pubkey ,new_user_pubkey, khfrag_sample):
 		req_args = {}
 		req_args['client_pubkey'] = client_pubkey
 		req_args['new_pubkey'] = new_pubkey_ser
-		req_args['khfrag_sample'] = oldClient_newUser_khfrag_sample
+		req_args['khfrag_sample'] = khfrag_sample
 		return cls(cmd = cmd_types.SEND_FRG_SAMPLE, args = req_args)
 
 
