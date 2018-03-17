@@ -49,7 +49,7 @@ def clientthread(conn, addr):
                         - capsoule
                     Now we go through all the other users and compute cfrag for each, and send it
                     '''
-                    alice_capsule = args['sender_capsule']
+                    alice_capsule = pre.Capsule.from_bytes(args['sender_capsule'])
                     alice_ciphertext = args['ciphertext']
                     alice_pk = args['sender_publickey']
                     share_cfrags(alice_pk, alice_capsule, alice_ciphertext, conn)

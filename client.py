@@ -94,8 +94,8 @@ def main():
                             - Alice's ciphertext
                             - cfrag/s (one from each node)
                     '''
-                    alice_pub_key = args['sender_publickey']
-                    A_capsule = args['sender_capsule']
+                    alice_pub_key = keys.UmbralPublicKey.from_bytes(args['sender_publickey'])
+                    A_capsule = pre.Capsule.from_bytes(args['sender_capsule'])
                     bob_capsule = A_capsule #This is just to stick to the demo
                     A_ciphertext = args['ciphertext']
                     cfrags = args['cfrag']
