@@ -55,9 +55,6 @@ def main():
     ser_reg_req = reg_req.serialize()
     server.send(ser_reg_req.encode(ENCODING))
 
-    # Logging the sent and recieved requests.
-    print('[SENT] Request : '+ ser_reg_req)
-
     while True:
 
         # maintains a list of possible input streams
@@ -85,8 +82,6 @@ def main():
                 
                 cmd = request.cmd
                 args = request.args
-                # Logging
-                print("[RECEIVED-CMD] : {0}".format(cmd))
                 
                 # Parse the recived command
                 if cmd == cmd_types.SEND_ALL_PKS:
@@ -113,7 +108,6 @@ def main():
                         to the all the users currenlty using the group chat. Then users would compute the re-encryption key
                         for that specific user and send the fragments to the nodes in the network.
                     '''
-                    print('[CLIENT] Received new pubkey, creating khfrag')
                     
                     #Get the public key of the new user
                     new_pubkey = args['new_pubkey']
@@ -147,7 +141,7 @@ def main():
 
                     # Decrypting the ciphertext
                     plaintext = pre.decrypt(bob_capsule, user_priv_key, A_ciphertext, alice_pub_key)
-
+                    
                     print("<{0}> {1}".format(alice_pub_key.to_bytes()[:10], plaintext.decode(ENCODING))) 
                 else:
                     print("Invalid command received")
@@ -168,7 +162,7 @@ def main():
                 sys.stdout.write("<You>")
                 sys.stdout.write(user_input)
                 sys.stdout.flush()
-                
+
     server.close()
 
 
