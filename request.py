@@ -60,6 +60,16 @@ class Request(object):
 		req_args = {'new_pubkey' : new_user_pubkey}
 		return cls(cmd = cmd_types.NEW_USR, args = req_args)
 
+
+	@classmethod
+	def respond_new_user_notify_request(cls, client_pubkey ,new_user_pubkey, oldClient_newUser_khfrag_sample):
+		req_args = {}
+		req_args['client_pubkey'] = client_pubkey
+		req_args['new_pubkey'] = new_pubkey_ser
+		req_args['khfrag_sample'] = oldClient_newUser_khfrag_sample
+		return cls(cmd = cmd_types.SEND_FRG_SAMPLE, args = req_args)
+
+
 def test_register_request():
 	config.set_default_curve()
 	#Create private and public keys 
