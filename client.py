@@ -27,8 +27,9 @@ def key_gen():
 
 reg_req = Request.register_request(user_pub_key)
 ser_reg_req = reg_req.serialize()
-print('The serialized registration request is : '+ ser_reg_req)
 server.send(ser_reg_req.encode(ENCODING))
+print('[SENT] Request : '+ ser_reg_req)
+
 while True:
 
     # maintains a list of possible input streams
@@ -50,7 +51,11 @@ while True:
             print(message)
         else:
             message = sys.stdin.readline()
-            server.send(message.encode(ENCODING))
+            #server.send(message.encode(ENCODING))
+            req = Request.send_plaintext_request(message)
+            ser_reg = req.serialize()
+            server.send(ser_reg.encode(ENCODING))
+            
             sys.stdout.write("<You>")
             sys.stdout.write(message)
             sys.stdout.flush()

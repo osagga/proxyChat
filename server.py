@@ -12,9 +12,9 @@ NUM_CLIENTS = 100
 BUFFER_SIZE = 2048
 REGISTER = 'node_new_user'
 NEW_MSG = 'node_new_msg'
-# SEND_MSG = 'usr_send_msg'
 SEND_FRG = 'usr_send_frag'
 USER_EXT = 'usr_exit'
+SEND_PLAINTEXT = 'usr_send_plaintext'
 
 ip_to_id = {} #Indexed by ip, returns (id,pk)
 key_fragment_arr = [[None for i in range(NUM_CLIENTS)] for j in range(NUM_CLIENTS)] #Indexed by [from][to] contains corresponding fragment
@@ -35,9 +35,9 @@ def clientthread(conn, addr):
                         request = Request.deserialize(message)
                     except:
                         print("Unable to deserialize")
-
-                    print("The request I got is as follow {0}".format(request))
                     cmd = request.cmd
+                    print("[RECEIVED-CMD] : {0}".format(cmd))
+                    
                     if cmd == REGISTER:
                         print("I'm now in Register")
                         ip = addr[0]
@@ -53,6 +53,14 @@ def clientthread(conn, addr):
                     elif cmd == USER_EXT:
                         #TODO
                         continue
+                    elif cmd == SEND_PLAINTEXT:
+                        args = request.args
+                        msg_received = args['msg']
+                        # IF Add
+                        print("<" + addr[0] + "> " + msg_received)
+                        # Calls broadcast function to send message to all
+                        message_to_send = "<" + addr[0] + "> " + msg_received
+                        broadcast(message_to_send, conn)
                     else:
                         # IF Add
                         print("<" + addr[0] + "> " + message)
