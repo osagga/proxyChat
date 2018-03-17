@@ -67,7 +67,7 @@ def clientthread(conn, addr):
                     khfrag_sample = [fragments.KFrag.from_bytes(sample) for sample in khfrag_sample]
                     # print("Got the following kfrag samples {0}".format(khfrag_sample))
                     key_fragment_arr.set_fragment(src_id, dst_id, khfrag_sample)
-                    print_map()
+                    # print_map()
                 
                 # elif cmd == cmd_types.SEND_PLAINTEXT:
                 #     args = request.args

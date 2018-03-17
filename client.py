@@ -68,7 +68,7 @@ def main():
                 print("[RECEIVED-CMD] : {0}".format(cmd))
                 if cmd == cmd_types.SEND_ALL_PKS:
                     pubkey_arr = args['pks']
-                    print("Received pks are {}".format(pubkey_arr))
+                    # print("Received pks are {}".format(pubkey_arr))
                     for new_pubkey in pubkey_arr:
                         khfrags = pre.split_rekey(user_priv_key, keys.UmbralPublicKey.from_bytes(new_pubkey), THRESHOLD_M, THRESHOLD_N)
                         #Create a sample to distribute the shares to each Node                    
@@ -78,7 +78,7 @@ def main():
                         #Create the request
                         req = Request.send_new_user_khfrag_samples_request(client_pubkey = user_pub_key, new_user_pubkey = new_pubkey, khfrag_sample = khfrags_sample)
                         req_ser = req.serialize()
-                        print('[CLIENT] Created KhFrag Sample Request = ' + req_ser)
+                        # print('[CLIENT] Created KhFrag Sample Request = ' + req_ser)
                         server.send(req_ser.encode(ENCODING))
                     continue
                 elif cmd == cmd_types.NEW_USR:
@@ -95,7 +95,7 @@ def main():
                     #Create the request
                     req = Request.send_new_user_khfrag_samples_request(client_pubkey = user_pub_key, new_user_pubkey = new_pubkey, khfrag_sample = khfrags_sample)
                     req_ser = req.serialize()
-                    print('[CLIENT] Created KhFrag Sample Request = ' + req_ser)
+                    # print('[CLIENT] Created KhFrag Sample Request = ' + req_ser)
                     server.send(req_ser.encode(ENCODING))
                     continue
                 elif cmd == cmd_types.MSG_TO_USER:
