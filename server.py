@@ -22,7 +22,7 @@ ctr_id = 0
 def clientthread(conn, addr):
     # sends a message to the client whose user object is conn
     conn.send("Welcome to this chatroom!".encode(ENCODING))
- 
+    usr_ip = addr[0]
     while True:
             try:
                 # Make sure that encoding will not violate the check on `message` below
@@ -33,31 +33,31 @@ def clientthread(conn, addr):
                         request = Request.deserialize(message)
                     except:
                         raise ValueError("Can't deserialize JSON data")
-
                     # print("The request I got is as follow {0}".format(request))
                     cmd = request.cmd
                     print("[RECEIVED-CMD] : {0}".format(cmd))
                     if cmd == cmd_types.REGISTER:
-                        ip = addr[0]
                         args = request.args
                         pubKey = get_pubKey(args)
-                        register(ip, pubKey)
+                        register(usr_ip, conn, pubKey)
                     elif cmd == cmd_types.NEW_MSG:
                         #TODO
                         continue
                     elif cmd == cmd_types.SEND_FRG:
                         #TODO
                         continue
-                    elif cmd == cmd_types.USER_EXT:
-                        #TODO
-                        continue
                     elif cmd == cmd_types.SEND_PLAINTEXT:
                         args = request.args
                         msg_received = args['msg']
-                        print("<" + addr[0] + "> " + msg_received)
+                        print("<" + usr_ip + "> " + msg_received)
                         # Calls broadcast function to send message to all
-                        message_to_send = "<" + addr[0] + "> " + msg_received
+                        message_to_send = "<" + usr_ip + "> " + msg_received
                         broadcast(message_to_send, conn)
+                    elif cmd == cmd_types.USER_EXT:
+                        print("I'm removing a client")
+                        remove(usr_ip, conn)
+                        #TODO
+                        continue
                     else:
                        print("Invalid command received")
                 else:
@@ -76,6 +76,7 @@ def broadcast(message, connection):
     for clients in list_of_clients:
         if clients!=connection:
             try:
+                clients
                 clients.send(message.encode(ENCODING))
             except:
                 clients.close()
@@ -97,10 +98,16 @@ def get_pubKey(args):
     else:
         raise ValueError("Can't find user PublicKey")
 
-def remove(conn, ip): 
+
+def remove(ip, connection): 
     '''
         User of <ip> is remove from the chat 
     '''
+    # try:
+    #     connection = ip_to_id[ip][2]
+    # except:
+    #     print("Can't find the client socket.")
+    
     if connection in list_of_clients:
         list_of_clients.remove(connection)
     return
@@ -115,12 +122,12 @@ def remove(conn, ip):
 	# available_ids += [rem_id]
     
 
-def register(ip, pubkey):
+def register(ip, conn, pubkey):
     global ip_to_id
     usr_id = get_id()
     if ip in ip_to_id:
         print("Client already registered.")
-    ip_to_id[ip] = (usr_id, pubkey)
+    ip_to_id[ip] = (usr_id, pubkey, conn)
     send_client_pks()
     return
 
@@ -175,7 +182,6 @@ def main():
     increased as per convenience.
     """
     server.listen(NUM_CLIENTS)
-
 
     while True:
     
