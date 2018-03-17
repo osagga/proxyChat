@@ -7,7 +7,7 @@ import select
 import sys
 import queue
 from threading import Thread
-from umbral import keys, config, fragments
+from umbral import pre, keys, config, fragments
 
 ENCODING = "utf-8"
 NUM_CLIENTS = 100
@@ -97,7 +97,7 @@ def share_cfrags(usr_pk, sender_capsule, sender_ciphertext, connection):
             dst_ip = clients.getpeername()[0]
             dst_id = ip_to_id[dst_ip][0]
             # get kfrag for sender and clients
-            kfrags = key_frag_map.get_fragment(src_id, dst_id)
+            kfrags = key_fragment_arr.get_fragment(src_id, dst_id)
             # Compute the cfrag
             cfrags = [pre.reencrypt(kfrag, sender_capsule).to_bytes() for kfrag in kfrags]
             # Send the sender_capsule, cfrag, senderPk, sender_ciphertext

@@ -106,7 +106,7 @@ def main():
                 elif cmd == cmd_types.SEND_PLAINTEXT:
                     args = request.args
                     msg_received = args['msg']
-                    print(msg_received)
+                    print(msg_received.decode(ENCODING))
                 else:
                     print("Invalid command received")
             else:
@@ -124,6 +124,7 @@ def main():
                     server.send(ser_reg.encode(ENCODING))
                 else:
                     ciphertext, sender_capsule = pre.encrypt(keys.UmbralPublicKey.from_bytes(user_pub_key), message.encode(ENCODING))
+                    sender_capsule = sender_capsule.to_bytes()
                     print('Ciphertext of :' + message)
                     print(ciphertext)
                     req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = user_pub_key)
