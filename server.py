@@ -48,11 +48,12 @@ def clientthread(conn, addr):
                         continue
                     elif cmd == cmd_types.SEND_PLAINTEXT:
                         args = request.args
-                        msg_received = args['msg']
-                        print("<" + usr_ip + "> " + msg_received)
+                        msg_received = args['msg']                        
                         # Calls broadcast function to send message to all
                         message_to_send = "<" + usr_ip + "> " + msg_received
-                        broadcast(message_to_send, conn)
+                        print(message_to_send)
+                        new_req = Request.send_plaintext_request(message_to_send)
+                        broadcast(new_req.serialize(), conn)
                     elif cmd == cmd_types.USER_EXT:
                         print("I'm removing a client")
                         remove(usr_ip, conn)
@@ -77,11 +78,9 @@ def broadcast(message, connection):
     for clients in list_of_clients:
         if clients!=connection:
             try:
-                clients
                 clients.send(message.encode(ENCODING))
             except:
                 clients.close()
- 
                 # if the link is broken, we remove the client
                 remove(clients)
 
@@ -93,7 +92,7 @@ def get_pubKey(args):
     '''
         Get the publicKey from the user passed args
     '''
-    config.set_default_curve()
+    
     if 'pub_key' in args:
         return keys.UmbralPublicKey.from_bytes(args['pub_key'])
     else:
@@ -145,6 +144,7 @@ def send_pks_to_client(ip, conn):
         req = Request.send_all_pks_request(pk_arr)
         ser_req = req.serialize()
         print('[REG STAGE TWO] Client Pks Found '+ ser_req)
+    return
 
 def register(ip, conn, pubkey):
     '''
@@ -180,7 +180,7 @@ def main():
     SOCK_STREAM means that data or characters are read in
     a continuous flow."""
     global key_fragment_arr
-
+    config.set_default_curve()
     init_ids() #queue containing the available ids
     
     key_fragment_arr = key_frag_map(NUM_CLIENTS)

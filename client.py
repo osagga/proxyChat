@@ -2,10 +2,11 @@
 import socket
 import select
 import sys
+import cmd_types
 from request import Request
 from umbral import pre, keys, config
 
-
+PROXY_ENCRYPTION_DISABLED = False
 ENCODING = "utf-8"
  
 def key_gen():
@@ -89,16 +90,28 @@ def main():
                     print(message)
                     #TODO
                     continue
+                elif cmd == cmd_types.SEND_PLAINTEXT:
+                    args = request.args
+                    msg_received = args['msg']
+                    print(msg_received)
                 else:
                     print("Invalid command received")
             else:
                 # Here we do the Enryption (this is the user input)
                 message = sys.stdin.readline()
                 #server.send(message.encode(ENCODING))
-                req = Request.send_plaintext_request(message)
-                ser_reg = req.serialize()
-                server.send(ser_reg.encode(ENCODING))
 
+                if(PROXY_ENCRYPTION_DISABLED):
+                    req = Request.send_plaintext_request(message)
+                    ser_reg = req.serialize()
+                    server.send(ser_reg.encode(ENCODING))
+                else:
+                    ciphertext, sender_capsule = pre.encrypt(user_pub_key, message.encode(ENCODING))
+                    print('Ciphertext of :' + message)
+                    print(ciphertext)
+                    req = Request.send_ciphertext_request(sender_capsule = sender_capsule, ciphertext = ciphertext, sender_publickey = user_pub_key)
+                    ser_req = req.serialize()
+                    print(ser_req)
                 sys.stdout.write("<You>")
                 sys.stdout.write(message)
                 sys.stdout.flush()

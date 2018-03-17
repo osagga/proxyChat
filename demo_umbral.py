@@ -17,6 +17,7 @@ bob_pub_key = bob_priv_key.get_pubkey()
 # Encrypt some data for Alice
 plaintext = b'Proxy Re-encryption is cool!!'
 alice_ciphertext, umbral_capsule = pre.encrypt(alice_pub_key, plaintext)
+print(umbral_capsule)
 print(alice_ciphertext)
 
 #4

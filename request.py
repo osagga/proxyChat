@@ -44,7 +44,15 @@ class Request(object):
 		serialized_serPks_arr = jsonpickle.encode(serPks_arr)
 		#A string representing serPks_arr
 		req_args = {'pks':serialized_serPks_arr}
-		return cls(cmd = SEND_ALL_PKS, args = req_args)
+		return cls(cmd = cmd_types.SEND_ALL_PKS, args = req_args)
+
+	@classmethod
+	def send_ciphertext_request(cls, sender_capsule, ciphertext, sender_publickey):
+		req_args = {}
+		req_args['ciphertext'] = ciphertext
+		req_args['sender_capsule'] = sender_capsule
+		req_args['sender_publickey'] = sender_publickey
+		return cls(cmd = cmd_types.NEW_MSG, args = req_args)
 
 def test_register_request():
 	config.set_default_curve()
