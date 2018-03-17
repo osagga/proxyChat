@@ -28,7 +28,9 @@ def main():
     IP_address = str(sys.argv[1])
     Port = int(sys.argv[2])
     server.connect((IP_address, Port))
-    (user_priv_key, user_pub_key.to_bytes()) = key_gen()
+    (user_priv_key, user_pub_key) = key_gen()
+
+    user_pub_key = user_pub_key.to_bytes()
 
     reg_req = Request.register_request(user_pub_key)
     ser_reg_req = reg_req.serialize()
