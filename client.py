@@ -2,7 +2,9 @@
 import socket
 import select
 import sys
- 
+from request import Request
+from umbral import pre, keys, config
+
 
 ENCODING = "utf-8"
 
@@ -14,8 +16,21 @@ IP_address = str(sys.argv[1])
 Port = int(sys.argv[2])
 server.connect((IP_address, Port))
  
+def key_gen():
+    config.set_default_curve()
+    priv_key = keys.UmbralPrivateKey.gen_key()
+    pub_key = priv_key.get_pubkey()
+    return (priv_key, pub_key)
+
+
+(user_priv_key, user_pub_key) = key_gen()
+
+reg_req = Request.register_request(user_pub_key)
+ser_reg_req = reg_req.serialize()
+print('The serialized registration request is : '+ ser_reg_req)
+server.send(ser_reg_req.encode(ENCODING))
 while True:
- 
+
     # maintains a list of possible input streams
     sockets_list = [sys.stdin, server]
  
@@ -40,3 +55,7 @@ while True:
             sys.stdout.write(message)
             sys.stdout.flush()
 server.close()
+
+
+
+

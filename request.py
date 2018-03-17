@@ -32,6 +32,7 @@ class Request(object):
 
 
 def test_register_request():
+	config.set_default_curve()
 	#Create private and public keys 
 	priv_key = keys.UmbralPrivateKey.gen_key()
 	pub_key = priv_key.get_pubkey()

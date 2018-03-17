@@ -34,7 +34,7 @@ def clientthread(conn, addr):
                     try:
                         request = Request.deserialize(message)
                     except:
-                        print("THIS IS AN ERROR")
+                        print("Unable to deserialize")
 
                     print("The request I got is as follow {0}".format(request))
                     cmd = request.cmd
