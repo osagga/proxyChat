@@ -6,7 +6,7 @@ import cmd_types
 from request import Request
 from umbral import pre, keys, config
 
-PROXY_ENCRYPTION_DISABLED = False
+PROXY_ENCRYPTION_DISABLED = True
 ENCODING = "utf-8"
 client_public_keys = []
 def key_gen():
@@ -49,7 +49,7 @@ def main():
 
         for socks in read_sockets:
             if socks == server:
-                message = socks.recv(2048)
+                message = socks.recv(2048).decode(ENCODING)
                 print("The message is {}".format(message))
                 # Parse command
                 try:
@@ -99,6 +99,10 @@ def main():
             else:
                 # Here we do the Enryption (this is the user input)
                 message = sys.stdin.readline()
+
+                # if not message:
+                #     continue
+
                 #server.send(message.encode(ENCODING))
 
                 if(PROXY_ENCRYPTION_DISABLED):
