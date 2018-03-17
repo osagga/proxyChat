@@ -73,7 +73,7 @@ def main():
                     #Compute the re-encryption keys
                     bob_priv_key = keys.UmbralPrivateKey.gen_key()
                     bob_pub_key = bob_priv_key.get_pubkey()
-                    print("the type is" + str(type(new_pubkey))
+                    print("the type is" + str(type(new_pubkey)))
                     khfrags = pre.split_rekey(user_priv_key, bob_pub_key, THRESHOLD_M, THRESHOLD_N)
                     #Create a sample to distribute the shares to each Node                    
                     khfrags_sample = []
