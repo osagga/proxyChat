@@ -69,10 +69,10 @@ def main():
                 elif cmd == cmd_types.NEW_USR:
                     print('[CLIENT] Received new pubkey, creating khfrag')
                     #Get the public key of the new user
-                    new_pubkey = keys.UmbralPublicKey args['new_pubkey']
+                    new_pubkey = args['new_pubkey']
                     #Compute the re-encryption keys
                     print("the type is" + str(type(new_pubkey)))
-                    khfrags = pre.split_rekey(user_priv_key, bob_pub_key, THRESHOLD_M, THRESHOLD_N)
+                    khfrags = pre.split_rekey(user_priv_key, keys.UmbralPublicKey.from_bytes(new_pubkey), THRESHOLD_M, THRESHOLD_N)
                     #Create a sample to distribute the shares to each Node                    
                     khfrags_sample = []
                     for i in range(0,THRESHOLD_M):
