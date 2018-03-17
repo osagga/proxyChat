@@ -71,7 +71,7 @@ def main():
                     #Get the public key of the new user
                     new_pubkey = args['new_pubkey']
                     #Compute the re-encryption keys
-                    print("the type is" + type(new_pubkey))
+                    print("the type is" + str(type(new_pubkey)))
                     khfrags = pre.split_rekey(user_priv_key, new_pubkey, THRESHOLD_M, THRESHOLD_N)
                     #Create a sample to distribute the shares to each Node                    
                     khfrags_sample = []
