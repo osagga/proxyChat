@@ -7,7 +7,7 @@ import select
 import sys
 import queue
 from threading import Thread
-from umbral import keys, config
+from umbral import keys, config, fragments
 
 ENCODING = "utf-8"
 NUM_CLIENTS = 100
@@ -39,7 +39,7 @@ def clientthread(conn, addr):
                 args = request.args
                 print("[RECEIVED-cmd] : {0}".format(cmd))
                 if cmd == cmd_types.REGISTER:
-                    pubKey = get_pubKey(args)
+                    pubKey = args['pub_key']
                     register(usr_ip, conn, pubKey)
                     # Ask the user for kfrags (after sending all PKs)
                 elif cmd == cmd_types.MSG_TO_USER:
@@ -58,7 +58,7 @@ def clientthread(conn, addr):
                     dst_pubkey = args['new_pubkey']
                     dst_id = pk_to_id[dst_pubkey]
                     khfrag_sample = args['khfrag_sample']
-                    khfrag_sample = [pre.KFrag.from_bytes(sample) for sample in khfrag_sample]
+                    khfrag_sample = [fragments.KFrag.from_bytes(sample) for sample in khfrag_sample]
                     print("Got the following kfrag samples {0}".format(khfrag_sample))
                     key_fragment_arr.set_fragment(src_id, dst_id, khfrag_sample)
                 
@@ -124,17 +124,6 @@ def broadcast(message, connection):
 def notify_user(cmd, user_id, npk):
     #TODO
     return
-
-def get_pubKey(args):
-    '''
-        Get the publicKey from the user passed args
-    '''
-    
-    if 'pub_key' in args:
-        return keys.UmbralPublicKey.from_bytes(args['pub_key'])
-    else:
-        raise ValueError("Can't find user PublicKey")
-
 
 def remove(ip, connection): 
     '''
