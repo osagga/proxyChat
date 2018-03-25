@@ -1,7 +1,7 @@
 # proxyChat
 <img width="238" alt="screen shot 2018-03-17 at 9 53 49 am" src="https://user-images.githubusercontent.com/5073889/37556522-d7480cca-29cd-11e8-88de-4eeff8bd0b31.png" class="center">
 
-Group chat app that uses NuCypher
+Decentralized, end-to-end encrypted group chatting application (winner of NuCypher sponser prize at MIT Bitcoin Hackathon)
 
 # Setup
 Configure the NuCypher Mock network through: https://github.com/nucypher/mock-net
